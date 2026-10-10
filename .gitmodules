@@ -1,0 +1,9 @@
+[submodule "libs/etl"]
+	path = libs/etl
+	url = https://github.com/ETLCPP/etl.git
+[submodule "teensy/freertos-teensy"]
+	path = teensy/freertos-teensy
+	url = https://github.com/tsandmann/freertos-teensy.git
+[submodule "teensy/hardware"]
+	path = teensy/hardware
+	url = https://github.com/tsandmann/teensy-cores.git
