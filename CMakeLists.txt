@@ -23,13 +23,13 @@ target_include_directories(RoboSidTeensy PRIVATE
     ${FreeRTOS_TEENSY_INC}
     ${APP_DIR}
     ${APP_DIR}/Services
+    ${APP_DIR}/Drivers
     ${APP_DIR}/Miscellaneous
+    ${APP_DIR}/Robot
 )
 
 file(GLOB_RECURSE APP_SOURCES
     "${APP_DIR}/*.cpp"
-    "${MCU_APP_DIR}/Services/*/*.cpp"
-    "${MCU_APP_DIR}/Miscellaneous/*/*.cpp"
 )
 
 target_sources(RoboSidTeensy PRIVATE 

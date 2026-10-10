@@ -4,6 +4,6 @@
 [submodule "teensy/freertos-teensy"]
 	path = teensy/freertos-teensy
 	url = https://github.com/tsandmann/freertos-teensy.git
-[submodule "teensy/hardware"]
-	path = teensy/hardware
+[submodule "teensy/hardware/cores"]
+	path = teensy/hardware/cores
 	url = https://github.com/tsandmann/teensy-cores.git

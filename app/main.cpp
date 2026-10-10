@@ -3,20 +3,27 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include <MotorControlService/MotorControl.hpp>
 #include <HeartbeatService/Heartbeat.hpp>
 #include <LoggerService/LoggerService.hpp>
 #include <Logger/Logger.hpp>
+#include <Wire.h>
 
 using namespace settings;
 using namespace types;
 
+/* Static global driver instances */
+PCA9685 PCA968Driver{Wire, 0x40};
+
 /* Services freeRTOS TCB blocks */
 StaticTask_t heartbeatServiceTCB;
 StaticTask_t loggerServiceTCB;
+StaticTask_t motorControlServiceTCB;
 
 /* Services freeRTOS tasks */
 StackType_t heartbeatServiceSTACK[HeartBeatS_STACK];
 StackType_t loggerServiceSTACK[LoggerS_STACK];
+StackType_t motorControlServiceSTACK[MotorControlS_STACK];
 
 /* Shared queues control blocks */
 StaticQueue_t loggerQueue_CB;
@@ -48,6 +55,11 @@ services::LoggerService LoggerService("LoggerService", LoggerS_STACK,
 services::Heartbeat Heartbeat("HeartBeatService", HeartBeatS_STACK,
                               HeartBeatS_PRIORITY, heartbeatServiceSTACK,
                               &heartbeatServiceTCB, HeartBeatS_BlinkInterval);
+
+services::MotorControl MotorControl("MotorControlService", MotorControlS_STACK,
+    MotorControlS_PRIORITY,
+    motorControlServiceSTACK,
+    &motorControlServiceTCB, PCA968Driver);
 
 int main(void)
 {
