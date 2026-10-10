@@ -43,5 +43,5 @@ namespace settings
     /* Shared Queues Lengths*/
     constexpr u32 LoggerQueue_Lenght = 10;
 
-    // constexpr u32 LoggerQueue_ItemSize = sizeof(LogMessage);
+    constexpr u32 LoggerQueue_ItemSize = sizeof(LogMessage);
 } // namespace settings

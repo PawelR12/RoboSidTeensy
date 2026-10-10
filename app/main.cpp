@@ -2,25 +2,61 @@
 #include <Settings.hpp>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 #include <HeartbeatService/Heartbeat.hpp>
-// #include <LoggerService/LoggerService.hpp>
+#include <LoggerService/LoggerService.hpp>
+#include <Logger/Logger.hpp>
+
+using namespace settings;
+using namespace types;
 
 /* Services freeRTOS TCB blocks */
 StaticTask_t heartbeatServiceTCB;
+StaticTask_t loggerServiceTCB;
 
 /* Services freeRTOS tasks */
-StackType_t heartbeatServiceSTACK[settings::HeartBeatS_STACK];
+StackType_t heartbeatServiceSTACK[HeartBeatS_STACK];
+StackType_t loggerServiceSTACK[LoggerS_STACK];
+
+/* Shared queues control blocks */
+StaticQueue_t loggerQueue_CB;
+
+/* Shared queues buffers */
+uint8_t loggerQueue_StorageBuffer[LoggerQueue_Lenght * LoggerQueue_ItemSize];
+
+/* Global Shared Queues */
+QueueHandle_t LoggerQueue =
+    xQueueCreateStatic(LoggerQueue_Lenght, LoggerQueue_ItemSize,
+                       loggerQueue_StorageBuffer, &loggerQueue_CB);
+
+// Create logger instance
+Logger *Logger = Logger::GetInstance();
+
+// Create logger settings struct
+services::loggerSettings loggerSettings{
+    .isUartLogOn = true,
+    .isSwoLogOn = false,
+    .isSdLogOn = false,
+};
+
+services::LoggerService LoggerService("LoggerService", LoggerS_STACK,
+                                      LoggerS_PRIORITY, loggerServiceSTACK,
+                                      &loggerServiceTCB, loggerSettings,
+                                      LoggerQueue);
 
 /* Static global service instances */
-services::Heartbeat Heartbeat("HeartBeatService", settings::HeartBeatS_STACK,
-                              settings::HeartBeatS_PRIORITY, heartbeatServiceSTACK,
-                              &heartbeatServiceTCB, settings::HeartBeatS_BlinkInterval);
+services::Heartbeat Heartbeat("HeartBeatService", HeartBeatS_STACK,
+                              HeartBeatS_PRIORITY, heartbeatServiceSTACK,
+                              &heartbeatServiceTCB, HeartBeatS_BlinkInterval);
 
 int main(void)
 {
-    Serial.begin(9600); // USB is always 12 or 480 Mbit/sec
+    // Serial.begin(9600); // USB is always 12 or 480 Mbit/sec
 
+	// DebugP_log("We are in main!\r\n");
+    Logger->Init(LoggerQueue);
 	Heartbeat.create();
+	LoggerService.create();
 	/* Start the scheduler to start the tasks executing. */
     vTaskStartScheduler();
 }

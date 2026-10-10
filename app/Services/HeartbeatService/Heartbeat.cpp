@@ -8,7 +8,7 @@
 /   @brief: Simple service to blink LED
 */
 #include <HeartbeatService/Heartbeat.hpp>
-// #include <Logger/Logger.hpp>
+#include <Logger/Logger.hpp>
 #include <Arduino.h>
 
 #define INTERNAL_LED 13
@@ -26,11 +26,13 @@ Heartbeat::Heartbeat(const char *serviceName, configSTACK_DEPTH_TYPE stackDepth,
 
 void Heartbeat::task()
 {
+    pinMode(INTERNAL_LED, OUTPUT);
+    LOG_INF("HeartBeat started");
     while (true)
     {
-        digitalWriteFast(INTERNAL_LED, HIGH);
+        digitalWrite(INTERNAL_LED, HIGH);
         vTaskDelay(pdMS_TO_TICKS(m_blinkTime));
-        digitalWriteFast(INTERNAL_LED, LOW);
+        digitalWrite(INTERNAL_LED, LOW);
         vTaskDelay(pdMS_TO_TICKS(m_blinkTime));
     }
 }
